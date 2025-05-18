@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ethio Canada Consultant - Biometric & ID Registration</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #f9f9f9;
+    color: #333;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  header img.flag {
+    width: 100px;
+    margin: 0 10px;
+    vertical-align: middle;
+  }
+  header h1 {
+    display: inline-block;
+    margin: 0 40px 0 40px;
+    vertical-align: middle;
+  }
+  .intro {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-size: 1.1em;
+    line-height: 1.5em;
+    text-align: center;
+  }
+  form {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+  }
+  fieldset {
+    margin-bottom: 25px;
+    border: 1px solid #ccc;
+    padding: 15px 20px 20px 20px;
+    border-radius: 6px;
+  }
+  legend {
+    font-weight: bold;
+    padding: 0 10px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select {
+    width: 100%;
+    padding: 7px 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #aaa;
+    box-sizing: border-box;
+  }
+  input[type="file"] {
+    margin-bottom: 15px;
+  }
+
+  .finger-group {
+    display:inline-flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+  .finger-btn {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #555;
+    border-radius: 12px;
+    background: #eee;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .finger-btn::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    width: 40px;
+    height: 80px;
+    background: repeating-radial-gradient(ellipse at center, lime, black 1px, #eee 3px, #eee 5px);
+    border-radius: 50% / 30%;
+    transform: translateX(-50%);
+  }
+  .finger-btn.scanning {
+    animation: pulseFinger 1.6s infinite;
+    border-color: black;
+    background: lime;
+  }
+  .finger-btn.scanned {
+    background: #4caf50;
+    border-color: #388e3c;
+  }
+  @keyframes pulseFinger {
+    0%, 100% { box-shadow: 0 0 5px 6px lime; }
+    100% { box-shadow: 0 0 90px 5px lime; }
+  }
+
+  .eye-scan-group {
+    text-align: center;
+  }
+  .eye-scan-group > div {
+    display: inline-flex;
+    gap: 25px;
+    margin: 10px 0 15px 0;
+  }
+  .eyeScanBtn {
+    width: 100px;
+    height: 70px;
+    background: #eee;
+    border: 2px solid #555;
+    border-radius: 40px / 20px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .eyeScanBtn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #444 40%, #222 90%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: background 0.3s;
+  }
+  .eyeScanBtn.scanning {
+    animation: pulseEye 1.5s infinite;
+    border-color: #0077cc;
+    background: #d0e7ff;
+  }
+  .eyeScanBtn.scanned {
+    background: #4caf50;
+    border-color: #388e3c;
+  }
+  @keyframes pulseEye {
+    0%, 100% { box-shadow: 0 0 6px 2px red; }
+    50% { box-shadow: 0 0 20px 6px red; }
+  }
+
+  .id-pic-container {
+    display: flex;
+    gap: 100px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .id-pic-preview {
+    width: 150px;
+    height: 100px;
+    border: 60px solid #ccc;
+    background: #f0f0f0;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  button[type="submit"] {
+    background: #0077cc;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button[type="submit"]:hover {
+    background: #005fa3;
+  }
+  p.result {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    color: #2e7d32;
+  }
+
+  /* NEW: Congratulation message */
+  #congratsMessage {
+    display: none;
+    font-size: 1.2em;
+    background: #e0f8e9;
+    padding: 15px;
+    border: 2px solid #2e7d32;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="https://flagcdn.com/w80/et.png" alt="Ethiopia Flag" class="flag" />
+  <h1>Ethio Canada Consultant</h1>
+  <img src="https://flagcdn.com/w80/ca.png" alt="Canada Flag" class="flag" />
+</header>
+
+<div class="intro">
+  <p>
+    Welcome to Ethio Canada Consultant, your trusted partner facilitating seamless migration and consultancy services between Ethiopia and Canada.
+  </p>
+</div>
+
+<form id="registrationForm">
+
+  <fieldset>
+    <legend>Personal Information</legend>
+
+    <label for="fullName">Full Name</label>
+    <input id="fullName" name="fullName" type="text" required />
+
+    <label for="address">Address</label>
+    <input id="address" name="address" type="text" required />
+
+    <label for="phone">Phone Number</label>
+    <input id="phone" name="phone" type="tel" required />
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="dob">Date of Birth</label>
+    <input id="dob" name="dob" type="date" required />
+
+    <label for="age">Age</label>
+    <input id="age" name="age" type="text" readonly />
+  </fieldset>
+
+  <fieldset>
+    <legend>Fingerprint Scan</legend>
+
+    <p>Click each finger to scan.</p>
+
+    <div>
+      <strong>Left Hand</strong>
+    </div>
+    <div class="finger-group">
+      <button type="button" class="finger-btn" data-hand="left" data-finger="thumb" title="Left Thumb"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="index" title="Left Index"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="middle" title="Left Middle"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="ring" title="Left Ring"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="pinky" title="Left Pinky"></button>
+    </div>
+
+    <div>
+      <strong>Right Hand</strong>
+    </div>
+    <div class="finger-group">
+      <button type="button" class="finger-btn" data-hand="right" data-finger="thumb" title="Right Thumb"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="index" title="Right Index"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="middle" title="Right Middle"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="ring" title="Right Ring"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="pinky" title="Right Pinky"></button>
+    </div>
+    <p id="fingerScanResult" class="result"></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Eye Scan</legend>
+    <p>Click any eye to scan both eyes simultaneously.</p>
+    <div class="eye-scan-group">
+      <div>
+        <button type="button" class="eyeScanBtn" id="leftEye" title="Left Eye"></button>
+        <button type="button" class="eyeScanBtn" id="rightEye" title="Right Eye"></button>
+      </div>
+      <p id="eyeScanResult" class="result"></p>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>ID Card Upload</legend>
+    <label for="idFront">Upload ID Front</label>
+    <input type="file" id="idFront" accept="image/*" required />
+    <label for="idBack">Upload ID Back</label>
+    <input type="file" id="idBack" accept="image/*" required />
+    <div class="id-pic-container">
+      <img id="idFrontPreview" class="id-pic-preview" alt="ID Front Preview" />
+      <img id="idBackPreview" class="id-pic-preview" alt="ID Back Preview" />
+    </div>
+  </fieldset>
+
+  <button type="submit">Submit Registration</button>
+</form>
+
+<!-- Congratulations Message Container -->
+<div id="congratsMessage">
+  Thank you for registering with <strong>Ethio Canada Consultant</strong>! We have received your submission successfully.
+</div>
+
+<audio id="scanSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
+<script>
+  // Calculate Age from DOB
+  document.getElementById("dob").addEventListener("change", function () {
+    const dob = new Date(this.value);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    document.getElementById("age").value = age;
+  });
+
+  // Fingerprint scanning logic
+  const fingerButtons = document.querySelectorAll(".finger-btn");
+  const fingerScanResult = document.getElementById("fingerScanResult");
+  const scanSound = document.getElementById("scanSound");
+  let scannedFingers = { left: new Set(), right: new Set() };
+
+  fingerButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const hand = button.getAttribute("data-hand");
+      const finger = button.getAttribute("data-finger");
+
+      if (scannedFingers[hand].has(finger)) {
+        alert(`${hand} hand ${finger} already scanned.`);
+        return;
+      }
+
+      button.classList.add("scanning");
+      fingerScanResult.textContent = `Scanning ${hand} hand ${finger}...`;
+
+      setTimeout(() => {
+        button.classList.remove("scanning");
+        button.classList.add("scanned");
+        scannedFingers[hand].add(finger);
+        fingerScanResult.textContent = `${hand} hand ${finger} scanned.`;
+        scanSound.play();
+      }, 1800);
+    });
+  });
+
+  // Eye scan logic - clicking any eye scans both
+  const eyeScanButtons = document.querySelectorAll(".eyeScanBtn");
+  const eyeScanResult = document.getElementById("eyeScanResult");
+
+  function scanBothEyes() {
+    if ([...eyeScanButtons].some(btn => btn.classList.contains("scanned") || btn.classList.contains("scanning"))) {
+      alert("Eyes already scanned or in progress.");
+      return;
+    }
+
+    eyeScanButtons.forEach(btn => btn.classList.add("scanning"));
+    eyeScanResult.textContent = "Scanning eyes...";
+
+    setTimeout(() => {
+      eyeScanButtons.forEach(btn => {
+        btn.classList.remove("scanning");
+        btn.classList.add("scanned");
+      });
+      eyeScanResult.textContent = "Eyes scanned successfully.";
+      scanSound.play();
+    }, 2500);
+  }
+
+  eyeScanButtons.forEach(btn => btn.addEventListener("click", scanBothEyes));
+
+  // Image preview logic
+  function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => preview.src = e.target.result;
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      preview.src = '';
+    }
+  }
+
+  document.getElementById("idFront").addEventListener("change", function () {
+    previewImage(this, "idFrontPreview");
+  });
+  document.getElementById("idBack").addEventListener("change", function () {
+    previewImage(this, "idBackPreview");
+  });
+
+  // Form submission logic
+  document.getElementById("registrationForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const allFingers = ["thumb", "index", "middle", "ring", "pinky"];
+    const fingersScanned = allFingers.every(f => scannedFingers.left.has(f) && scannedFingers.right.has(f));
+    const eyesScanned = [...eyeScanButtons].every(btn => btn.classList.contains("scanned"));
+
+    if (!fingersScanned) {
+      alert("Please scan all fingers.");
+      return;
+    }
+    if (!eyesScanned) {
+      alert("Please scan both eyes.");
+      return;
+    }
+
+    alert("Registration submitted successfully!");
+    document.getElementById("congratsMessage").style.display = "block";
+
+    this.reset();
+    fingerButtons.forEach(btn => btn.classList.remove("scanned"));
+    scannedFingers.left.clear();
+    scannedFingers.right.clear();
+    eyeScanButtons.forEach(btn => btn.classList.remove("scanned"));
+    fingerScanResult.textContent = "";
+    eyeScanResult.textContent = "";
+    document.getElementById("idFrontPreview").src = "";
+    document.getElementById("idBackPreview").src = "";
+    document.getElementById("age").value = "";
+  });
+</script>
+
+</body>
+</html>
