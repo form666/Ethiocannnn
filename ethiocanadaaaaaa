@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ethio Canada Consultant - Biometric & ID Registration</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  font-style: italic;
+  margin: 20px;
+  background: #0a192f; /* Deep navy blue */
+  color: #f4f4f4; /* Soft white */
+}
+
+  header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+  header img.flag {
+    width: 150px;
+    margin: 0 10px;
+    vertical-align: top;
+  }
+  header h1 {
+    display: inline-block;
+    margin: 0 20px 0 20px;
+    vertical-align: middle;
+  }
+  .intro {
+    max-width: 700px;
+    margin: 0 auto 30px;
+    font-size: 1em;
+    line-height: 1.5em;
+    text-align: center;
+  }
+form {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #112240; /* Darker blue for contrast */
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 0 20px rgba(0, 255, 231, 0.3);
+  transition: box-shadow 0.4s ease;
+}
+
+form:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 231, 0.5);
+}
+
+fieldset {
+  margin-bottom: 30px;
+  padding: 25px 30px;
+  border: 2px solid #00ffe7; /* Aqua border */
+  border-radius: 12px;
+  background: #0f2a47; /* Slightly lighter background */
+  box-shadow: 0 0 15px rgba(0, 255, 231, 0.3);
+  transition: all 0.3s ease;
+}
+
+fieldset:hover {
+  border-color: #3f8efc; /* Accent electric blue */
+  box-shadow: 0 0 25px rgba(63, 142, 252, 0.6);
+}
+
+  legend {
+    font-weight: bold;
+    padding: 0 30px;
+  }
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  select {
+    width: 100;
+    padding: 7px 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid white;
+    box-sizing: border-box;
+  }
+  input[type="file"] {
+    margin-bottom: 15px;
+  }
+
+  .finger-group {
+    display:inline-flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+.finger-btn {
+  width: 100px;
+  height: 120px;
+  background: #f2c29c;
+  border: 2px solid #b87b4f;
+  border-radius: 50% / 30%;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease;
+  box-shadow:
+    inset 0 -8px 10px rgba(0, 0, 0, 0.08),
+    inset 0 4px 6px rgba(255, 255, 255, 0.3),
+    0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Border disappears and subtle glow after scan */
+.finger-btn.scanned {
+  border-color: #28a745; /* success green */
+  background: linear-gradient(to bottom, #b6f5c9, #7be495);
+  box-shadow:
+    0 0 25px 15px rgba(40, 167, 69, 0.5),   /* outer green glow */
+    0 8px 15px rgba(0, 0, 0, 0.2),           /* subtle depth */
+    inset 0 0 10px rgba(0, 0, 0, 0.1);       /* finger groove */
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Realistic fingerprint pattern using SVG as background */
+.finger-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  .finger-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="70" height="140" viewBox="0 0 70 140"><g fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="1"><ellipse cx="35" cy="70" rx="30" ry="65"/><ellipse cx="35" cy="70" rx="26" ry="58"/><ellipse cx="35" cy="70" rx="22" ry="50"/><ellipse cx="35" cy="70" rx="18" ry="42"/><ellipse cx="35" cy="70" rx="14" ry="34"/><ellipse cx="35" cy="70" rx="10" ry="26"/><ellipse cx="35" cy="70" rx="6" ry="18"/></g></svg>');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.6;
+  z-index: 1;
+  border-radius: inherit;
+}
+  background-repeat: repeat;
+  background-size: 12px 24px;
+  opacity: 0.5;
+  border-radius: inherit;
+  z-index: 1;
+}
+  background-repeat: repeat;
+  background-size: 10px 20px;
+  opacity: 0.5;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Scan Line */
+.finger-btn::after {
+  content: '';
+  position: absolute;
+  top: -20%;
+  left: 0;
+  width: 100%;
+  height: 18px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 255, 0, 0) 0%,
+    rgba(0, 255, 0, 0.7) 50%,
+    rgba(0, 255, 0, 0) 100%
+  );
+  z-index: 2;
+  animation: scanComplete 2.2s ease-in-out 1; /* runs once */
+}
+
+/* Scan animation */
+@keyframes scanComplete {
+  0% {
+    top: -20%;
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+  .eye-scan-group {
+    text-align: center;
+  }
+  .eye-scan-group > div {
+    display: inline-flex;
+    gap: 25px;
+    margin: 10px 0 15px 0;
+  }
+  .eyeScanBtn {
+  width: 120px;
+  height: 90px;
+  background: #ffffff;
+  border: 2px solid black;
+  border-radius: 50% / 50%;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.3s, border-color 0.3s;
+  box-shadow: inset 0 0 8px #ccc;
+}
+
+/* Iris (the black eye effect) */
+.eyeScanBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  background: radial-gradient(circle, #1a1a1a 35%, #000000 60%, #2b2b2b 90%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.3s;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+/* Optional: a white highlight for realism */
+.eyeScanBtn::after {
+  content: '';
+  position: absolute;
+  top: 35%;
+  left: 45%;
+  width: 8px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+  .eyeScanBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #1a1a1a 35%, #000000 60%, #2b2b2b 90%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.3s;
+}
+  .eyeScanBtn.scanning {
+    animation: pulseEye 1.5s infinite;
+    border-color: black;
+    background: #d0e7ff;
+  }
+  .eyeScanBtn.scanned {
+    background: lime;
+    border-color: lime;
+  }
+  @keyframes pulseEye {
+    0%, 100% { box-shadow: 0 0 6px 2px lime; }
+    50% { box-shadow: 0 0 20px 6px lime; }
+  }
+
+  
+  button[type="submit"] {
+    background: lime;
+    color: black;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 20px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .id-pic-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  padding: 2rem;
+  background: #f0f4f8;
+  border-radius: 12px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Stylish ID card preview */
+.id-pic-preview {
+  width: 100px;
+  height: 120px;
+  background: #fff;
+  border: 2px solid #4caf50; /* Modern lime/green */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  object-fit: cover;
+}
+
+/* Hover effect */
+.id-pic-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Optional: Label below the ID */
+.id-label {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #444;
+  font-style: italic;
+}
+  button[type="submit"]:hover {
+    background: white;
+  }
+  p.result {
+    font-weight: bold;
+    text-align: center;
+    margin-top: 10px;
+    color: lime;
+  }
+
+  /* NEW: Congratulation message */
+  #congratsMessage {
+    display: none;
+    font-size: 1.5em;
+    background: black;
+    padding: 15px;
+    border: 2px solid lime;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 20px auto;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+<img src="https://flagcdn.com/w320/et.png" alt="Ethiopia Flag" class="flag" />
+  <h1>MESRAK GENERAL TRADING PLC 
+  
+  📲 0950519065</h1>
+  
+<img src="https://flagcdn.com/w320/ca.png" alt="Canada Flag" class="flag" />
+</header>
+
+<div class="intro">
+ <p>
+ 🇪🇹🇨🇦🇪🇹🇨🇦 🌐 ወደ MESRAK GENERAL TRADING PLC እንኳን በደህና መጡ   ያለን ብቸኛ ስልክ ቁጥር 0950519065🌐 🇨🇦🇪🇹🇨🇦🇪🇹
+  </p>
+  <p>✅በ MESRAK GENERAL TRADING PLC የጉዞ ምኞቶቻችሁን ወደ እውነት ለመቀየር ተዘጋጅተናል። የካናዳን የተፈጥሮ ውበት ለመዳሰስ፣ የስራ እድል ለማግኘት ፣ ወይም ኢሚግሬሽንን፣ ትምህርትን ወይም የንግድ እድሎችን ለመከታተል እያሰብክ ከሆነ፣ እያንዳንዱን እርምጃ አብረናችሁ ለመራመድ መጥተናል።</p>
+  <p>✅ቪዛ ማማከር እና ማስፈፀም፣ ፓስፖርት ማስጨረስ፣የጉዞ እቅድ እና ድንበር ተሻጋሪ አገልግሎቶች ላይ ከበቂ እውቀት ጋር፣ ለልዩ ጉዞዎች የተዘጋጀ ግላዊ ድጋፍ እናቀርባለን።
+<p>🇨🇦🇪🇹🇨🇦📲 0950519065 🇪🇹🇨🇦🇪🇹</p>
+</div>
+
+<form id="registrationForm">
+
+  <fieldset>
+    <legend>Personal Information</legend>
+
+    <label for="Name">Name (የእርስዎ ሰም)</label>
+    <input id="Name" name="Name" type="text" required />
+<label for="fatherName">Father Name (የአባት ስም)</label>
+    <input id="fatherName" name="fatherName" type="text" required />
+    <label for="grandFatherName">Grand Father Name (የአያት ስም)</label>
+    <input id="grandFatherName" name="grandFatherName" type="text" required />
+    <label for="HolderName">Holder Name (የተያዥ ስም)</label>
+    <input id="HolderName" Holder Name="HolderName" type="text" required />
+    <label for="address">Address(አድራሻ)</label>
+    <input id="address" name="address" type="text" required />
+
+    <label for="phone">Phone Number(ስልክ ቁጥር)</label>
+    <input id="phone" name="phone" type="tel" required />
+
+    <label for="email">Email(ኢሜል)</label>
+    <input id="email" name="email" type="email" required />
+
+    <label for="dob">Date of Birth(የልደት ቀን)</label>
+    <input id="dob" name="dob" type="date" required />
+
+    <label for="age">Age(እድሜ)</label>
+    <input id="age" name="age" type="text" readonly />
+  </fieldset>
+
+  <fieldset>
+    <legend>Fingerprint Scan(የእጅ አሻራ)</legend>
+
+    <p>እያንዳንዱን ጣትዎን ከአዉራ ጣት ጀምሮ በቅደም ተከተል ያስገቡ።</p>
+
+    <div>
+      <strong>Left Hand (ግራ እጅ)</strong>
+    </div>
+    <div class="finger-group">
+      <button type="button" class="finger-btn" data-hand="left" data-finger="thumb" title="Left Thumb"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="index" title="Left Index"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="middle" title="Left Middle"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="ring" title="Left Ring"></button>
+      <button type="button" class="finger-btn" data-hand="left" data-finger="pinky" title="Left Pinky"></button>
+    </div>
+
+    <div>
+      <strong>Right Hand(ቀኝ እጅ)</strong>
+    </div>
+    <div class="finger-group">
+      <button type="button" class="finger-btn" data-hand="right" data-finger="thumb" title="Right Thumb"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="index" title="Right Index"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="middle" title="Right Middle"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="ring" title="Right Ring"></button>
+      <button type="button" class="finger-btn" data-hand="right" data-finger="pinky" title="Right Pinky"></button>
+    </div>
+    <p id="fingerScanResult" class="result"></p>
+  </fieldset>
+
+  <fieldset>
+    <legend>Eye Scan(የአይን አሻራ)</legend>
+    <p>Click any eye to scan both eyes simultaneously.</p>
+    <div class="eye-scan-group">
+      <div>
+        <button type="button" class="eyeScanBtn" id="leftEye" title="Left Eye"></button>
+        <button type="button" class="eyeScanBtn" id="rightEye" title="Right Eye"></button>
+      </div>
+      <p id="eyeScanResult" class="result"></p>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>ID Card Upload</legend>
+    <label for="idFront">Upload ID Front(የፊት ገፅ)</label>
+    <input type="file" id="idFront" accept="image/*" required />
+    <label for="idBack">Upload ID Back(የኋላ ገፅ)</label>
+    <input type="file" id="idBack" accept="image/*" required />
+    <div class="id-pic-container">
+      <img id="idFrontPreview" class="id-pic-preview" alt="ID Front Preview" />
+      <img id="idBackPreview" class="id-pic-preview" alt="ID Back Preview" />
+    </div>
+  </fieldset>
+
+  <button type="submit">Submit Registration</button>
+</form>
+
+<!-- Congratulations Message Container -->
+<div id="congratsMessage">
+  🎉🎉🎉Thank you for registering with🎉🎉🎉 <strong>🇪🇹🇨🇦MESRAK GENERAL TRADING PLC🇨🇦🇪🇹</strong>! We have received your submission successfully🧾🧾🧾.
+</div>
+
+<audio id="scanSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
+<script>
+  // Calculate Age from DOB
+  document.getElementById("dob").addEventListener("change", function () {
+    const dob = new Date(this.value);
+    const today = new Date();
+    let age = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    document.getElementById("age").value = age;
+  });
+
+  // Fingerprint scanning logic
+  const fingerButtons = document.querySelectorAll(".finger-btn");
+  const fingerScanResult = document.getElementById("fingerScanResult");
+  const scanSound = document.getElementById("scanSound");
+  let scannedFingers = { left: new Set(), right: new Set() };
+
+  fingerButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const hand = button.getAttribute("data-hand");
+      const finger = button.getAttribute("data-finger");
+
+      if (scannedFingers[hand].has(finger)) {
+        alert(`${hand} hand ${finger} already scanned.`);
+        return;
+      }
+
+      button.classList.add("scanning");
+      fingerScanResult.textContent = `Scanning ${hand} hand ${finger}...`;
+
+      setTimeout(() => {
+        button.classList.remove("scanning");
+        button.classList.add("scanned");
+        scannedFingers[hand].add(finger);
+        fingerScanResult.textContent = `${hand} hand ${finger} scanned.`;
+        scanSound.play();
+      }, 1800);
+    });
+  });
+
+  // Eye scan logic - clicking any eye scans both
+  const eyeScanButtons = document.querySelectorAll(".eyeScanBtn");
+  const eyeScanResult = document.getElementById("eyeScanResult");
+
+  function scanBothEyes() {
+    if ([...eyeScanButtons].some(btn => btn.classList.contains("scanned") || btn.classList.contains("scanning"))) {
+      alert("Eyes already scanned or in progress.");
+      return;
+    }
+
+    eyeScanButtons.forEach(btn => btn.classList.add("scanning"));
+    eyeScanResult.textContent = "Scanning eyes...";
+
+    setTimeout(() => {
+      eyeScanButtons.forEach(btn => {
+        btn.classList.remove("scanning");
+        btn.classList.add("scanned");
+      });
+      eyeScanResult.textContent = "Eyes scanned successfully.";
+      scanSound.play();
+    }, 2500);
+  }
+
+  eyeScanButtons.forEach(btn => btn.addEventListener("click", scanBothEyes));
+
+  // Image preview logic
+  function previewImage(input, previewId) {
+    const preview = document.getElementById(previewId);
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => preview.src = e.target.result;
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      preview.src = '';
+    }
+  }
+
+  document.getElementById("idFront").addEventListener("change", function () {
+    previewImage(this, "idFrontPreview");
+  });
+  document.getElementById("idBack").addEventListener("change", function () {
+    previewImage(this, "idBackPreview");
+  });
+
+  // Form submission logic
+  document.getElementById("registrationForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const allFingers = ["thumb", "index", "middle", "ring", "pinky"];
+    const fingersScanned = allFingers.every(f => scannedFingers.left.has(f) && scannedFingers.right.has(f));
+    const eyesScanned = [...eyeScanButtons].every(btn => btn.classList.contains("scanned"));
+
+    if (!fingersScanned) {
+      alert("Please scan all fingers.");
+      return;
+    }
+    if (!eyesScanned) {
+      alert("Please scan both eyes.");
+      return;
+    }
+
+    alert("Registration submitted successfully!");
+    document.getElementById("congratsMessage").style.display = "block";
+
+    this.reset();
+    fingerButtons.forEach(btn => btn.classList.remove("scanned"));
+    scannedFingers.left.clear();
+    scannedFingers.right.clear();
+    eyeScanButtons.forEach(btn => btn.classList.remove("scanned"));
+    fingerScanResult.textContent = "";
+    eyeScanResult.textContent = "";
+    document.getElementById("idFrontPreview").src = "";
+    document.getElementById("idBackPreview").src = "";
+    document.getElementById("age").value = "";
+  });
+</script>
+
+</body>
+</html>
